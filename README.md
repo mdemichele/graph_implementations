@@ -22,4 +22,4 @@ To run the tests for the undirected graph, use:
 - Implemented Dijkstra's algorithm on a directed graph. 
 
 
-*Note* I'll add brief descriptions of the expected outputs for the testing functions if this project somehow gets used by others :)
+*Note:* I'll add brief descriptions of the expected outputs for the testing functions if this project somehow gets used by others :)
