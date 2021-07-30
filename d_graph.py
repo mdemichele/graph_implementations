@@ -670,49 +670,43 @@ class DirectedGraph:
         out = f"GRAPH ({self.v_count} vertices):\n{out}"
         return out
 
-    # ------------------------------------------------------------------ #
-
     def add_vertex(self) -> int:
         """
         Method adds a new vertex to the graph
         """
         self.v_count = self.v_count + 1
         
-        # append empty 
+        # append an empty list to the adjacency matrix, representing the new vertex 
         self.adj_matrix.append([])
         
+        # Add a zero in the newly created list for every vertex in the matrix
         for index1 in range(0, self.v_count):
-            
             index2 = 0
             
             while index2 < self.v_count and len(self.adj_matrix[index1]) < self.v_count:
                 self.adj_matrix[index1].append(0)
-                
                 index2 += 1
             
-        return self.v_count
-            
-                        
-        self.adj_matrix.append(list_to_append)
-        
+        # Return the number of vertices in the graph after the addition
         return self.v_count
 
     def add_edge(self, src: int, dst: int, weight=1) -> None:
         """
         Method adds a new edge to a graph
         """
-        # EDGE CASE 1: If src and dst are the same 
+        # EDGE CASE 1: If src and dst are the same, do nothing 
         if src == dst:
             return None
         
-        # EDGE CASE 2: If weight is not positive 
+        # EDGE CASE 2: If weight is not positive, do nothing 
         if weight < 0:
             return None
             
-        # EDGE CASE 3: One or both vertices do not exist in graph 
+        # EDGE CASE 3: One or both vertices do not exist in graph, do nothing  
         if src >= len(self.adj_matrix) or dst >= len(self.adj_matrix[src]):
             return None
         
+        # Add entered weight to the appropriate edge in the graph 
         self.adj_matrix[src][dst] = weight
         return None
 
@@ -720,14 +714,15 @@ class DirectedGraph:
         """
         Method removes an edge from a graph
         """
-        # EDGE CASE 1: If either or both vertices don't exist in graph 
+        # EDGE CASE 1 (Upper Bound): If either or both vertices don't exist in graph, do nothing 
         if src >= len(self.adj_matrix) or dst >= len(self.adj_matrix[src]):
             return None
             
-        # EDGE CASE 1: If either or both vertices don't exist in graph 
+        # EDGE CASE 1 (Lower Bound): If either or both vertices don't exist in graph, do nothing  
         if src < 0 or dst < 0:
             return None
             
+        # Remove the edge from the matrix by setting it's value back to zero
         self.adj_matrix[src][dst] = 0
         return None
 
@@ -735,41 +730,55 @@ class DirectedGraph:
         """
         Method gets all the vertices in a graph 
         """
+        # Create a list of vertices to return 
         vertices = []
         
+        # Loop through all of the vertices in the matrix
         for index in range(0, self.v_count):
-            
+            # Add each vertice to the vertice list 
             vertices.append(index)
             
+        # Return the final vertice list 
         return vertices
 
     def get_edges(self) -> []:
         """
         Method gets all the edges in a directed graph
         """
+        # Create a list of edges to return 
         edges = []
         
+        # Loop through all of the vertices 
         for index1 in range(0, len(self.adj_matrix)):
             
+            # For each vertice, loop through each edge 
             for index2 in range(0, len(self.adj_matrix[index1])):
+                
+                # If the edge exists (i.e. doesn't equal 0), add it to the e dge list 
                 if self.adj_matrix[index1][index2] != 0:
                     edge = (index1, index2, self.adj_matrix[index1][index2])
                     edges.append(edge)
-            
+        
+        # Return the final edge list 
         return edges
 
     def is_valid_path(self, path: []) -> bool:
         """
         Method determines if a path is a valid path in a graph 
         """
-        # EDGE CASE 1: An empty path is considered valid 
+        # EDGE CASE 1: An empty path is considered valid
         if len(path) == 0:
             return True 
             
+        # Loop through each vertex in the path 
         for index in range(0, len(path) - 1):
+            
+            # If there is NO edge between the current vertex and the next one in the path, (i.e. edge between equals zero)
+            # the path is not considered valid 
             if self.adj_matrix[path[index]][path[index + 1]] == 0:
                 return False 
-                
+        
+        # If you make it through to the end of the path, the path is considered valid 
         return True
 
     def dfs(self, v_start, v_end=None) -> []:
@@ -780,28 +789,36 @@ class DirectedGraph:
         if v_start < 0 or v_start > len(self.adj_matrix):
             return []
             
-        # Initialize an empty set of visited vertices 
+        # STEP 1: Initialize three things: 
+        # 1.) An empty set of visited vertices 
+        # 2.) An empty stack for processing 
+        # 3.) An empty list to be returned 
         visited = set()
-        # initialize an empty stack for processing 
         stack = Stack()
-        # Initialize return list 
         return_list = []
-        # Add first vertex to stack 
+        
+        # STEP 2: Add the first vertex to the processing stack 
         stack.push(v_start)
-        # While stack is not empty, repeat process 
+        
+        # STEP 3: While the stack is not empty, repeat the process 
         while stack.is_empty() == False:
             
-            # pop a vertex 
+            # pop a vertex from the stack. This vertex becomes the current vertex  
             vertex = stack.pop()
-            # If vertex is not in the set of visited vertices 
+            
+            # Check to see if the vertex is not in the set of visited vertices.
+            # If it IS in the set of visited vertices, then simply move on to the next vertex 
+            # If it IS NOT in the set of visited vertices, process the vertex  
             if vertex not in visited:
-                # Add vertex to set of visited vertices 
+                
+                # Add vertex to set of visited vertices & to the return list 
                 visited.add(vertex)
-                # Add vertex to return_list 
                 return_list.append(vertex)
-                # If you've hit v_end, end right there 
+                
+                # If you've hit v_end, end the function right here  
                 if vertex == v_end:
                     return return_list 
+                    
                 # push each vertex that is a direct successor of v to the stack 
                 successors = []
                 for index in range(0, len(self.adj_matrix[vertex])):
@@ -818,6 +835,8 @@ class DirectedGraph:
                 # Push sorted successors into stack 
                 for index in range(0, len(successors)):
                     stack.push(successors[index])
+                    
+        # STEP 4: Once the process is complete, return the final list of vertices 
         return return_list
 
     def bfs(self, v_start, v_end=None) -> []:
@@ -827,23 +846,33 @@ class DirectedGraph:
         # EDGE CASE 1: v_start is not in graph 
         if v_start < 0 or v_start > len(self.adj_matrix): 
             return []    
-        # Initialize visited set 
-        visited = set()
-        # Initialize an empty queue 
+            
+        # STEP 1: Initialize 3 things: 
+        # 01.) An empty set of visited vertices 
+        # 02.) An empty queue for processing 
+        # 03.) An empty list to be returned  
+        visited = set() 
         queue = Queue()
-        # Initialize our list to return 
         return_list = []
-        # Add v_start to queue 
+        
+        # STEP 2: Add v_start to queue 
         queue.enqueue(v_start)
+        
+        # STEP 3: While the queue is not empty, repeat the process 
         while queue.is_empty() == False: 
+            
+            # Dequeue an element from the processing queue 
             vertex = queue.dequeue()
             
-            # Only perform operations if vertex hasn't been visited yet
+            # Check to see if the vertex has already been visited:
+            # If the vertex has been visited, move on
+            # If the vertex has NOT been visited, process the current vertex. 
             if vertex not in visited:
+                # Add the vertex to the visited set & the return list 
                 visited.add(vertex)
                 return_list.append(vertex)
                     
-                # If you've hit the v_end, end traversal:
+                # If you've hit the v_end, end the function right here 
                 if vertex == v_end:
                     return return_list 
                         
@@ -851,12 +880,12 @@ class DirectedGraph:
                 successors = []
                 for index in range(0, len(self.adj_matrix[vertex])):
                     if self.adj_matrix[vertex][index] != 0:
-                        # print("index: " + str(index))
                         successors.append(index)
                 # Enqueue the successors into the queue 
                 for index in range(0, len(successors)):
                     queue.enqueue(successors[index])
-                        
+        
+        # STEP 4: Return the final list of vertices     
         return return_list
         
     def detect_cycle(self, index, visited, recursion):
@@ -866,9 +895,11 @@ class DirectedGraph:
         # Add current index to recursion stack 
         recursion[index] = True
         
+        # Loop through each edge of the current vertex 
         for vertex in range(0, len(self.adj_matrix[index])):
             
-            # If it's a neighbor 
+            # If the vertex has an edge, check that the connected vertex has not already been visited 
+            # If you find a vertex that has already been visited, there is a cycle   
             if self.adj_matrix[index][vertex] != 0:
                 
                 if visited[vertex] == False:
@@ -876,6 +907,10 @@ class DirectedGraph:
                         return True
                 elif recursion[vertex] == True:
                     return True 
+                    
+        # If make it through every edge of the vertex and haven't found a cycle,
+        # Set the vertex value back to false in the recursion stack
+        # and return False 
         recursion[index] = False
         return False    
 
@@ -883,103 +918,113 @@ class DirectedGraph:
         """
         Return True if graph contains a cycle, False otherwise
         """    
-        
-        # Initialize visited stack 
+        # Initialize a visited stack & a recursion stack 
         visited = []
+        recursion = []
+        
+        # Loop through each vertex in the matrix & appending a False each time to the visited stack and recursion stack 
         for index in range(0, self.v_count + 1):
             visited.append(False)
-        # Initialize recursion stack 
-        recursion = []
-        for index in range(0, self.v_count + 1):
             recursion.append(False)
-        
-        # Call the recursive function on all items in the graph 
+
+        # Loop through each vertex in the matrix 
         for index in range(0, self.v_count):
             
-            # If vertex hasn't been visited yet, call helper function on it
+            # If vertex hasn't been visited yet, call a recursive helper function on it to check if that vertex has a cycle
+            # Return True is there is a cycle detected  
             if visited[index] == False:
                 answer = self.detect_cycle(index, visited, recursion)
                 if answer == True:
                     return True 
+                    
+        # If you make it through the entire matrix, there are no cycles 
         return False
                     
     def dijkstra(self, src: int) -> []:
         """
         Method implements the Dijkstra algorithm to compute the length of the shortest path from a given vertex to all other vertices in the graph
         """
-        # Initialize the return list 
+        # Initialize the return list and set the initial value of each vertex to infinity
         return_list = []
         for index in range(0, len(self.adj_matrix)):
             return_list.append(float('inf'))
         
-        # Initialize the hash table 
+        # Initialize an empty hash table and an empty queue 
         hash = {}
-        
         queue = MinHeap()
         
+        # Start the process by adding the src vertex to the queue 
         current = [src, 0]
         queue.add(current)
         
+        # Continue processing until the queue is empty 
         while queue.is_empty() == False:
             
+            # Set the current vertex equal to the top of the heap (i.e. the index of the current shortest path)
+            # distance will equal the value of the current shortest path 
             vertex = queue.remove_min()
             distance = vertex[1]
             
+            # If the current vertex hasn't been visited yet, keep processing it 
             if vertex[0] not in hash:
                 
+                # Save the vertex in the hash table 
                 hash[vertex[0]] = distance
                 
+                # Loop through each of the vertice's edges and save their distance values into the queue 
+                # NOTE: The queue will move larger distance values down in the queue, so we only keep track of distance values that are lower. 
                 for index in range(0, len(self.adj_matrix[vertex[0]])):
                     if self.adj_matrix[vertex[0]][index] != 0:
                         new_distance = distance + self.adj_matrix[vertex[0]][index]
                         vertex_to_add = [index, new_distance]
                         queue.add(vertex_to_add)
                 
-        # Insert all the vertices in the hash into return_list 
+        # Once, all the vertices have been processed, insert all the vertices from the hash into return_list 
         for index in range(0, len(self.adj_matrix)):
             if hash.get(index) != None:
                 return_list[index] = (hash[index])
             else:
                 return_list[index] = float('inf')
-            
+        
+        # Return the final list of vertices 
         return return_list
 
 if __name__ == '__main__':
 
-    # print("\nPDF - method add_vertex() / add_edge example 1")
-    # print("----------------------------------------------")
-    # g = DirectedGraph()
-    # print(g)
-    # for _ in range(5):
-    #     g.add_vertex()
-    # print(g)
-    # 
-    # edges = [(0, 1, 10), (4, 0, 12), (1, 4, 15), (4, 3, 3),
-    #          (3, 1, 5), (2, 1, 23), (3, 2, 7)]
-    # for src, dst, weight in edges:
-    #     g.add_edge(src, dst, weight)
-    # print(g)
-    # 
-    # 
-    # print("\nPDF - method get_edges() example 1")
-    # print("----------------------------------")
-    # g = DirectedGraph()
-    # print(g.get_edges(), g.get_vertices(), sep='\n')
-    # edges = [(0, 1, 10), (4, 0, 12), (1, 4, 15), (4, 3, 3),
-    #          (3, 1, 5), (2, 1, 23), (3, 2, 7)]
-    # g = DirectedGraph(edges)
-    # print(g.get_edges(), g.get_vertices(), sep='\n')
-    # 
+    print("\nPDF - method add_vertex() / add_edge example 1")
+    print("----------------------------------------------")
+    g = DirectedGraph()
+    print(g)
+    for _ in range(5):
+        g.add_vertex()
+    print(g)
     
-    # print("\nPDF - method is_valid_path() example 1")
-    # print("--------------------------------------")
-    # edges = [(0, 1, 10), (4, 0, 12), (1, 4, 15), (4, 3, 3),
-    #          (3, 1, 5), (2, 1, 23), (3, 2, 7)]
-    # g = DirectedGraph(edges)
-    # test_cases = [[0, 1, 4, 3], [1, 3, 2, 1], [0, 4], [4, 0], [], [2]]
-    # for path in test_cases:
-    #     print(path, g.is_valid_path(path))
-    # 
+    edges = [(0, 1, 10), (4, 0, 12), (1, 4, 15), (4, 3, 3),
+             (3, 1, 5), (2, 1, 23), (3, 2, 7)]
+    for src, dst, weight in edges:
+        g.add_edge(src, dst, weight)
+    print(g)
+    
+    
+    print("\nPDF - method get_edges() example 1")
+    print("----------------------------------")
+    g = DirectedGraph()
+    print(g.get_edges(), g.get_vertices(), sep='\n')
+    edges = [(0, 1, 10), (4, 0, 12), (1, 4, 15), (4, 3, 3),
+             (3, 1, 5), (2, 1, 23), (3, 2, 7)]
+    g = DirectedGraph(edges)
+    print(g.get_edges(), g.get_vertices(), sep='\n')
+    
+    
+    print("\nPDF - method is_valid_path() example 1")
+    print("--------------------------------------")
+    edges = [(0, 1, 10), (4, 0, 12), (1, 4, 15), (4, 3, 3),
+             (3, 1, 5), (2, 1, 23), (3, 2, 7)]
+    g = DirectedGraph(edges)
+    test_cases = [[0, 1, 4, 3], [1, 3, 2, 1], [0, 4], [4, 0], [], [2]]
+    for path in test_cases:
+        print(path, g.is_valid_path(path))
+    
     
     print("\nPDF - method dfs() and bfs() example 1")
     print("--------------------------------------")
@@ -989,42 +1034,42 @@ if __name__ == '__main__':
     for start in range(5):
         print(f'{start} DFS:{g.dfs(start)} BFS:{g.bfs(start)}')
     
-    # 
-    # print("\nPDF - method has_cycle() example 1")
-    # print("----------------------------------")
-    # edges = [(0, 1, 10), (4, 0, 12), (1, 4, 15), (4, 3, 3),
-    #          (3, 1, 5), (2, 1, 23), (3, 2, 7)]
-    # g = DirectedGraph(edges)
-    # 
-    # edges_to_remove = [(3, 1), (4, 0), (3, 2)]
-    # for src, dst in edges_to_remove:
-    #     g.remove_edge(src, dst)
-    #     print(g.get_edges(), g.has_cycle(), sep='\n')
-    # 
-    # edges_to_add = [(4, 3), (2, 3), (1, 3), (4, 0)]
-    # for src, dst in edges_to_add:
-    #     g.add_edge(src, dst)
-    #     print(g.get_edges(), g.has_cycle(), sep='\n')
-    # print('\n', g)
-    # 
-    # print("\nCustom Text - has_cycle")
-    # print("-------------------------------")
-    # 
-    # edges = [(0, 7, 16), (2, 0, 18), (2, 1, 19), (2, 6, 19), (2, 11, 8), (3, 0, 11), (3, 2, 11), (3, 8, 7), (4, 1, 13), (6, 0, 20), (8, 10, 20), (10, 2, 5), (11, 3, 18)]
-    # 
-    # g = DirectedGraph(edges)
-    # 
-    # print(g.get_edges(), g.has_cycle(), sep="\n")
     
-    # 
-    # print("\nPDF - dijkstra() example 1")
-    # print("--------------------------")
-    # edges = [(0, 1, 10), (4, 0, 12), (1, 4, 15), (4, 3, 3),
-    #          (3, 1, 5), (2, 1, 23), (3, 2, 7)]
-    # g = DirectedGraph(edges)
-    # for i in range(5):
-    #     print(f'DIJKSTRA {i} {g.dijkstra(i)}')
-    # g.remove_edge(4, 3)
-    # print('\n', g)
-    # for i in range(5):
-    #     print(f'DIJKSTRA {i} {g.dijkstra(i)}')
+    print("\nPDF - method has_cycle() example 1")
+    print("----------------------------------")
+    edges = [(0, 1, 10), (4, 0, 12), (1, 4, 15), (4, 3, 3),
+             (3, 1, 5), (2, 1, 23), (3, 2, 7)]
+    g = DirectedGraph(edges)
+    
+    edges_to_remove = [(3, 1), (4, 0), (3, 2)]
+    for src, dst in edges_to_remove:
+        g.remove_edge(src, dst)
+        print(g.get_edges(), g.has_cycle(), sep='\n')
+    
+    edges_to_add = [(4, 3), (2, 3), (1, 3), (4, 0)]
+    for src, dst in edges_to_add:
+        g.add_edge(src, dst)
+        print(g.get_edges(), g.has_cycle(), sep='\n')
+    print('\n', g)
+    
+    print("\nCustom Text - has_cycle")
+    print("-------------------------------")
+    
+    edges = [(0, 7, 16), (2, 0, 18), (2, 1, 19), (2, 6, 19), (2, 11, 8), (3, 0, 11), (3, 2, 11), (3, 8, 7), (4, 1, 13), (6, 0, 20), (8, 10, 20), (10, 2, 5), (11, 3, 18)]
+    
+    g = DirectedGraph(edges)
+    
+    print(g.get_edges(), g.has_cycle(), sep="\n")
+    
+    
+    print("\nPDF - dijkstra() example 1")
+    print("--------------------------")
+    edges = [(0, 1, 10), (4, 0, 12), (1, 4, 15), (4, 3, 3),
+             (3, 1, 5), (2, 1, 23), (3, 2, 7)]
+    g = DirectedGraph(edges)
+    for i in range(5):
+        print(f'DIJKSTRA {i} {g.dijkstra(i)}')
+    g.remove_edge(4, 3)
+    print('\n', g)
+    for i in range(5):
+        print(f'DIJKSTRA {i} {g.dijkstra(i)}')
