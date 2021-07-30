@@ -16,3 +16,7 @@ To run the tests for the undirected graph, use:
 
 `python3 ud_graph.py`
 
+# What I Learned
+- Learned how to build class implementations of both directed and undirected graphs. The class implementations included functions for adding vertices, adding edges, removing edges, checking for valid paths through the graph, and checking for the presence of cycles within the graph.
+- Implemented Depth-first Search and Breadth-first Search algorithms for both directed and undirected graphs 
+- Implemented Dijkstra's algorithm on a directed graph. 
