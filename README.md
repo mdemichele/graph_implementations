@@ -20,3 +20,6 @@ To run the tests for the undirected graph, use:
 - Learned how to build class implementations of both directed and undirected graphs. The class implementations included functions for adding vertices, adding edges, removing edges, checking for valid paths through the graph, and checking for the presence of cycles within the graph.
 - Implemented Depth-first Search and Breadth-first Search algorithms for both directed and undirected graphs 
 - Implemented Dijkstra's algorithm on a directed graph. 
+
+
+*Note* I'll add brief descriptions of the expected outputs for the testing functions if this project somehow gets used by others :)
