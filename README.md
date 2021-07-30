@@ -1,2 +1,4 @@
 # graph_implementations
-An Implementation of a Directed and Undirected Graph ADT With Dikjstra's Algorithm For CS 261 - Data Structures
+Here is my implementation of a directed and undirected graph ADT with Dikjstra's Algorithm.
+
+Project was built for CS 261 - Data Structures.
